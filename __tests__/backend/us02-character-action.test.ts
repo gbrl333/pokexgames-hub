@@ -32,7 +32,7 @@ import { createCharacterAction } from '@/lib/actions/createCharacterAction'
 const validPayload = {
   name: 'AshKetchum',
   level: 500,
-  clan: 'Impulso',
+  clan: 'Naturia',
   pokemons: ['Pikachu', 'Charizard'],
 }
 

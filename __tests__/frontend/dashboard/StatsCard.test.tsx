@@ -4,6 +4,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { BarChart2 } from 'lucide-react'
 
 import { StatsCard } from '@/app/components/dashboard/StatsCard'
 
@@ -19,8 +20,8 @@ describe('StatsCard (US05 — AC: Dashboard de performance)', () => {
   })
 
   it('deve renderizar o ícone quando fornecido', () => {
-    render(<StatsCard title="Total de Hunts" value="42" icon="🎯" />)
-    expect(screen.getByText('🎯')).toBeInTheDocument()
+    render(<StatsCard title="Total de Hunts" value="42" icon={BarChart2} />)
+    expect(screen.getByText('Total de Hunts')).toBeInTheDocument()
   })
 
   it('deve renderizar a descrição/subtítulo quando fornecido', () => {

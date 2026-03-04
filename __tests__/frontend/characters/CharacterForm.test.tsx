@@ -38,12 +38,12 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
 
     it('deve renderizar o campo de input de pokémons', () => {
       render(<CharacterForm />)
-      expect(screen.getByPlaceholderText(/pokémon|pokemon/i)).toBeInTheDocument()
+      expect(screen.getByPlaceholderText(/charizard|enter para adicionar/i)).toBeInTheDocument()
     })
 
     it('deve renderizar o botão de submit', () => {
       render(<CharacterForm />)
-      expect(screen.getByRole('button', { name: /criar|salvar|adicionar/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /criar personagem|salvar/i })).toBeInTheDocument()
     })
   })
 
@@ -53,7 +53,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       render(<CharacterForm />)
 
       await user.type(screen.getByLabelText(/nome/i), 'Ab')
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
         expect(screen.getByText(/3/i)).toBeInTheDocument()
@@ -66,7 +66,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
 
       await user.type(screen.getByLabelText(/nome/i), 'AshKetchum')
       await user.type(screen.getByLabelText(/level/i), '9999')
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
         expect(screen.getByText(/1000/i)).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
 
       await user.type(screen.getByLabelText(/nome/i), 'AshKetchum')
       await user.type(screen.getByLabelText(/level/i), '500')
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
         expect(mockCreateCharacter).not.toHaveBeenCalled()
@@ -92,7 +92,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       const user = userEvent.setup()
       render(<CharacterForm />)
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       await user.type(pokemonInput, 'Pikachu')
       await user.keyboard('{Enter}')
 
@@ -105,7 +105,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       const user = userEvent.setup()
       render(<CharacterForm />)
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       await user.type(pokemonInput, 'Pikachu')
       await user.keyboard('{Enter}')
 
@@ -125,7 +125,7 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       const user = userEvent.setup()
       render(<CharacterForm />)
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       const pokemons = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6']
 
       for (const p of pokemons) {
@@ -149,11 +149,11 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       await user.type(screen.getByLabelText(/nome/i), 'AshKetchum')
       await user.type(screen.getByLabelText(/level/i), '500')
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       await user.type(pokemonInput, 'Pikachu')
       await user.keyboard('{Enter}')
 
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
         expect(mockCreateCharacter).toHaveBeenCalledOnce()
@@ -171,14 +171,14 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       await user.type(screen.getByLabelText(/nome/i), 'AshKetchum')
       await user.type(screen.getByLabelText(/level/i), '500')
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       await user.type(pokemonInput, 'Pikachu')
       await user.keyboard('{Enter}')
 
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
-        expect(screen.getByText(/nome/i)).toBeInTheDocument()
+        expect(screen.getByText(/já existe um personagem|nome.*já.*existe|duplicate/i)).toBeInTheDocument()
       })
     })
 
@@ -190,11 +190,11 @@ describe('CharacterForm (US02 — AC: Formulário com validação Zod)', () => {
       await user.type(screen.getByLabelText(/nome/i), 'AshKetchum')
       await user.type(screen.getByLabelText(/level/i), '500')
 
-      const pokemonInput = screen.getByPlaceholderText(/pokémon|pokemon/i)
+      const pokemonInput = screen.getByPlaceholderText(/charizard|enter para adicionar/i)
       await user.type(pokemonInput, 'Pikachu')
       await user.keyboard('{Enter}')
 
-      await user.click(screen.getByRole('button', { name: /criar|salvar|adicionar/i }))
+      await user.click(screen.getByRole('button', { name: /criar personagem|salvar/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /criando|salvando|aguarde/i })).toBeDisabled()

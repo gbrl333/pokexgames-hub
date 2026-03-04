@@ -1,6 +1,6 @@
 'use client'
 
-// Tabela de ranking global com sort por coluna (US04)
+// Tabela de ranking global com sort, medalhas e visual premium (US04)
 import { useState } from 'react'
 import {
   Table,
@@ -10,6 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { CLAN_COLORS } from '@/types/index'
+import type { ClanName } from '@/types/index'
+import { ArrowUpDown, ArrowUp, ArrowDown, Trophy } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface RankingRow {
   pokemon_target: string
@@ -27,24 +31,37 @@ interface RankingTableProps {
 type SortKey = 'pokemon_target' | 'avg_gp_per_hour' | 'total_hunts'
 type SortDir = 'asc' | 'desc'
 
-/** Formata GP/h: ≥1_000_000 → Xkk, ≥1_000 → Xk, senão número inteiro */
 function formatGpH(value: number): string {
-  if (value >= 1_000_000) return `${Math.round(value / 1_000_000)}kk`
+  if (value >= 1_000_000) {
+    const n = value / 1_000_000
+    return `${Number.isInteger(n) ? n : n.toFixed(1)}kk`
+  }
   if (value >= 1_000) return `${Math.round(value / 1_000)}k`
   return String(value)
 }
 
+const MEDAL_CLASSES = [
+  'text-amber-400', // 🥇
+  'text-slate-400', // 🥈
+  'text-amber-700', // 🥉
+]
+
+function SortIcon({ sortKey, currentKey, dir }: { sortKey: SortKey; currentKey: SortKey; dir: SortDir }) {
+  if (sortKey !== currentKey) return <ArrowUpDown size={13} className="ml-1 text-muted-foreground/50" />
+  return dir === 'asc'
+    ? <ArrowUp size={13} className="ml-1 text-primary" />
+    : <ArrowDown size={13} className="ml-1 text-primary" />
+}
+
 export function RankingTable({ data }: RankingTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('avg_gp_per_hour')
-  const [sortDir, setSortDir] = useState<SortDir>('asc')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
-      // Segunda vez no mesmo campo: toggle
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
     } else {
       setSortKey(key)
-      // Campos de texto: asc natural (A-Z); campos numéricos: desc (maior primeiro)
       setSortDir(key === 'pokemon_target' ? 'asc' : 'desc')
     }
   }
@@ -53,9 +70,7 @@ export function RankingTable({ data }: RankingTableProps) {
     const aVal = a[sortKey]
     const bVal = b[sortKey]
     if (typeof aVal === 'string' && typeof bVal === 'string') {
-      return sortDir === 'asc'
-        ? aVal.localeCompare(bVal)
-        : bVal.localeCompare(aVal)
+      return sortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
     }
     return sortDir === 'asc'
       ? (aVal as number) - (bVal as number)
@@ -64,60 +79,119 @@ export function RankingTable({ data }: RankingTableProps) {
 
   if (data.length === 0) {
     return (
-      <div className="flex h-32 items-center justify-center rounded-xl border border-dashed">
+      <div className="flex h-40 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card/50">
+        <Trophy size={28} className="text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground">Nenhum dado disponível</p>
       </div>
     )
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            <button
-              type="button"
-              onClick={() => handleSort('pokemon_target')}
-              className="font-semibold hover:underline"
-            >
-              Pokémon
-            </button>
-          </TableHead>
-          <TableHead>Clã</TableHead>
-          <TableHead>
-            <button
-              type="button"
-              onClick={() => handleSort('avg_gp_per_hour')}
-              className="font-semibold hover:underline"
-            >
-              GP/h
-            </button>
-          </TableHead>
-          <TableHead>
-            <button
-              type="button"
-              onClick={() => handleSort('total_hunts')}
-              className="font-semibold hover:underline"
-            >
-              Hunts
-            </button>
-          </TableHead>
-          <TableHead>Level</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sorted.map((row, idx) => (
-          <TableRow key={`${row.pokemon_target}-${row.clan}-${idx}`}>
-            <TableCell>{row.pokemon_target}</TableCell>
-            <TableCell>{row.clan}</TableCell>
-            <TableCell>{formatGpH(row.avg_gp_per_hour)}</TableCell>
-            <TableCell>{row.total_hunts}</TableCell>
-            <TableCell>
-              {row.min_level}–{row.max_level}
-            </TableCell>
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <Table>
+        <TableHeader>
+          <TableRow className="border-border bg-secondary/50 hover:bg-secondary/50">
+            <TableHead className="w-10 text-center text-xs">#</TableHead>
+            <TableHead>
+              <button
+                type="button"
+                onClick={() => handleSort('pokemon_target')}
+                className="flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Pokémon
+                <SortIcon sortKey="pokemon_target" currentKey={sortKey} dir={sortDir} />
+              </button>
+            </TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground">Clã</TableHead>
+            <TableHead>
+              <button
+                type="button"
+                onClick={() => handleSort('avg_gp_per_hour')}
+                className="flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                GP/h Médio
+                <SortIcon sortKey="avg_gp_per_hour" currentKey={sortKey} dir={sortDir} />
+              </button>
+            </TableHead>
+            <TableHead>
+              <button
+                type="button"
+                onClick={() => handleSort('total_hunts')}
+                className="flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Hunts
+                <SortIcon sortKey="total_hunts" currentKey={sortKey} dir={sortDir} />
+              </button>
+            </TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground">Levels</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {sorted.map((row, idx) => {
+            const clanColor = CLAN_COLORS[row.clan as ClanName] ?? CLAN_COLORS['Nenhum']
+            const isTop3 = idx < 3
+            const isPositive = row.avg_gp_per_hour >= 0
+
+            return (
+              <TableRow
+                key={`${row.pokemon_target}-${row.clan}-${idx}`}
+                className={cn(
+                  'border-border transition-colors',
+                  isTop3 && idx === 0 && 'bg-amber-500/5 hover:bg-amber-500/10',
+                  isTop3 && idx === 1 && 'bg-slate-500/5 hover:bg-slate-500/10',
+                  isTop3 && idx === 2 && 'bg-amber-700/5 hover:bg-amber-700/10',
+                )}
+              >
+                {/* Posição */}
+                <TableCell className="text-center">
+                  {isTop3 ? (
+                    <Trophy size={14} className={cn('mx-auto', MEDAL_CLASSES[idx])} />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">{idx + 1}</span>
+                  )}
+                </TableCell>
+
+                {/* Pokémon */}
+                <TableCell>
+                  <span className="font-medium text-foreground">{row.pokemon_target}</span>
+                </TableCell>
+
+                {/* Clã */}
+                <TableCell>
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+                      clanColor.bg, clanColor.text, clanColor.border
+                    )}
+                  >
+                    <span className={cn('h-1.5 w-1.5 rounded-full', clanColor.dot)} />
+                    {row.clan}
+                  </span>
+                </TableCell>
+
+                {/* GP/h */}
+                <TableCell>
+                  <span className={cn('font-bold', isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500')}>
+                    {isPositive ? '+' : ''}{formatGpH(row.avg_gp_per_hour)}
+                  </span>
+                </TableCell>
+
+                {/* Hunts */}
+                <TableCell>
+                  <span className="text-sm text-muted-foreground">{row.total_hunts}</span>
+                </TableCell>
+
+                {/* Levels */}
+                <TableCell>
+                  <span className="text-xs text-muted-foreground">
+                    {row.min_level}–{row.max_level}
+                  </span>
+                </TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
+    </div>
   )
 }

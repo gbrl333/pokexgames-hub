@@ -22,7 +22,7 @@ const characters: Character[] = [
     user_id: 'user-1',
     name: 'AshKetchum',
     level: 500,
-    clan: 'Impulso',
+    clan: 'Naturia',
     pokemons: ['Pikachu'],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),

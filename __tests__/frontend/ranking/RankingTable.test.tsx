@@ -32,10 +32,10 @@ describe('RankingTable (US04 — AC: Tabela com sort)', () => {
 
     it('deve formatar GP/h com sufixo kk ou k', () => {
       render(<RankingTable data={rankingData} />)
-      // 3.000.000 → "3kk", 5.000.000 → "5kk", 8.000.000 → "8kk"
-      expect(screen.getByText('3kk')).toBeInTheDocument()
-      expect(screen.getByText('5kk')).toBeInTheDocument()
-      expect(screen.getByText('8kk')).toBeInTheDocument()
+      // 3.000.000 → "3kk", 5.000.000 → "5kk", 8.000.000 → "8kk" (with + prefix for positive)
+      expect(screen.getByText('+3kk')).toBeInTheDocument()
+      expect(screen.getByText('+5kk')).toBeInTheDocument()
+      expect(screen.getByText('+8kk')).toBeInTheDocument()
     })
 
     it('deve mostrar empty state quando não há dados', () => {
@@ -53,8 +53,8 @@ describe('RankingTable (US04 — AC: Tabela com sort)', () => {
       await user.click(gpHeader)
 
       const rows = screen.getAllByRole('row')
-      // Primeira linha de dados (índice 1, pois 0 é o header) deve ser Mewtwo (8kk)
-      expect(rows[1].textContent).toContain('Mewtwo')
+      // Default is desc (Mewtwo first), clicking once switches to asc → Dragonite (3kk) first
+      expect(rows[1].textContent).toContain('Dragonite')
     })
 
     it('deve ordenar por Pokémon ao clicar no cabeçalho', async () => {

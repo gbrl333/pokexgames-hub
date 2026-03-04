@@ -15,7 +15,7 @@ import { CLAN_NAMES } from '@/types/index'
 const validCharacter = {
   name: 'AshKetchum',
   level: 500,
-  clan: 'Impulso' as const,
+  clan: 'Naturia' as const,
   pokemons: ['Pikachu', 'Charizard'],
 }
 

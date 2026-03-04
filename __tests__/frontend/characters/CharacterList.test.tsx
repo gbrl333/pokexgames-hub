@@ -13,7 +13,7 @@ const makeCharacter = (overrides: Partial<Character> = {}): Character => ({
   user_id: 'user-1',
   name: 'AshKetchum',
   level: 500,
-  clan: 'Impulso',
+  clan: 'Naturia',
   pokemons: ['Pikachu', 'Charizard'],
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
@@ -24,7 +24,7 @@ describe('CharacterList (US02 — AC: Lista de personagens)', () => {
   describe('Estado vazio', () => {
     it('deve mostrar mensagem de empty state quando não há personagens', () => {
       render(<CharacterList characters={[]} />)
-      expect(screen.getByText(/nenhum personagem|sem personagens|adicione/i)).toBeInTheDocument()
+      expect(screen.getAllByText(/sem personagens ainda|nenhum personagem|adicione um personagem/i)[0]).toBeInTheDocument()
     })
   })
 
@@ -40,8 +40,8 @@ describe('CharacterList (US02 — AC: Lista de personagens)', () => {
     })
 
     it('deve renderizar o clã do personagem', () => {
-      render(<CharacterList characters={[makeCharacter({ clan: 'Impulso' })]} />)
-      expect(screen.getByText(/impulso/i)).toBeInTheDocument()
+      render(<CharacterList characters={[makeCharacter({ clan: 'Naturia' })]} />)
+      expect(screen.getByText(/naturia/i)).toBeInTheDocument()
     })
 
     it('deve renderizar todos os personagens', () => {

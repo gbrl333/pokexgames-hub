@@ -11,12 +11,17 @@ vi.mock('@/app/components/auth/LoginButton', () => ({
   LoginButton: () => <button data-testid="login-button">Entrar com Discord</button>,
 }))
 
+// Mock ThemeToggle to avoid next-themes provider requirement
+vi.mock('@/app/components/layout/ThemeToggle', () => ({
+  ThemeToggle: () => <button aria-label="Alternar tema" />,
+}))
+
 import LandingPage from '@/app/page'
 
 describe('LandingPage (US01 — AC: Botão Discord na Landing Page)', () => {
   it('deve renderizar o botão de login', () => {
     render(<LandingPage />)
-    expect(screen.getByTestId('login-button')).toBeInTheDocument()
+    expect(screen.getAllByTestId('login-button')[0]).toBeInTheDocument()
   })
 
   it('deve ter um título ou headline da aplicação', () => {
@@ -26,7 +31,7 @@ describe('LandingPage (US01 — AC: Botão Discord na Landing Page)', () => {
 
   it('deve mencionar o nome da aplicação ou pokexgames', () => {
     render(<LandingPage />)
-    expect(screen.getByText(/pokex|hub|hunt/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/pokex|hub|hunt/i)[0]).toBeInTheDocument()
   })
 
   it('deve ter uma descrição ou subtítulo', () => {

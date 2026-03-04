@@ -12,7 +12,8 @@ describe('RankingFilters (US04 — AC: Filtros reativos)', () => {
   describe('Filtro de clã', () => {
     it('deve renderizar o select de clã', () => {
       render(<RankingFilters onClanChange={vi.fn()} onLevelRangeChange={vi.fn()} />)
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+      // Clan filter is now pill buttons — check that clan options are rendered
+      expect(screen.getByText('Naturia')).toBeInTheDocument()
     })
 
     it('deve chamar onClanChange ao selecionar um clã', async () => {
@@ -20,11 +21,9 @@ describe('RankingFilters (US04 — AC: Filtros reativos)', () => {
       const onClanChange = vi.fn()
       render(<RankingFilters onClanChange={onClanChange} onLevelRangeChange={vi.fn()} />)
 
-      const combobox = screen.getByRole('combobox')
-      await user.click(combobox)
-      await user.click(screen.getByText('Impulso'))
+      await user.click(screen.getByRole('button', { name: 'Naturia' }))
 
-      expect(onClanChange).toHaveBeenCalledWith('Impulso')
+      expect(onClanChange).toHaveBeenCalledWith('Naturia')
     })
 
     it('deve ter opção "Todos os clãs" para remover o filtro', () => {

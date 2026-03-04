@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ThemeProvider } from "@/app/components/layout/ThemeProvider";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -14,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "PokéxGames Hub",
-  description: "Registe as suas hunts, veja o ranking e acompanhe o seu desempenho no PokéxGames.",
+  title: "PokeHub — Gestão de Hunts para PokéxGames",
+  description: "Registe as suas hunts, veja o ranking global e acompanhe o seu desempenho no PokéxGames. A ferramenta definitiva para trainers.",
 };
 
 export default function RootLayout({
@@ -24,11 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
